@@ -8,6 +8,7 @@
 
 import UIKit
 import AFNetworking
+import SwiftLoader
 
 class MovieViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -17,11 +18,20 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
  
     @IBOutlet weak var scrollView: UIScrollView!
     
+    var config : SwiftLoader.Config = SwiftLoader.Config()
+    
     var movies: [NSDictionary]?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+    
+        config.size = 150
+        config.spinnerColor = .blueColor()
+        config.foregroundColor = .redColor()
+        config.foregroundAlpha = 0.5
+        SwiftLoader.setConfig(config)
+
         tableView.dataSource = self
         tableView.delegate = self
         
@@ -58,6 +68,14 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
 
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        SwiftLoader.show(title: "Loading...", animated: true)
+        SwiftLoader.hide()
+        
     }
     
     func delay(delay:Double, closure:()->()) {
