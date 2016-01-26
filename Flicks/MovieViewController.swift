@@ -96,6 +96,7 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
                 } else {
                     if error != nil {
                         self.networkErrorButton.hidden = false
+                        
                     }
                 }
         });
@@ -149,12 +150,12 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
         let overview = movie["overview"] as! String
         
         let baseUrl = "http://image.tmdb.org/t/p/w500"
-        let posterPath = movie["poster_path"] as! String
-        let imageUrl = NSURL(string: baseUrl + posterPath)
-
+        if let posterPath = movie["poster_path"] as? String {
+            let imageUrl = NSURL(string: baseUrl + posterPath)
+            cell.posterView.setImageWithURL(imageUrl!)
+        }
         cell.titelLabel.text = title
         cell.overviewLabel.text = overview
-        cell.posterView.setImageWithURL(imageUrl!)
         
         cell.titelLabel.textColor = UIColor.orangeColor()
         cell.overviewLabel.textColor = UIColor.whiteColor()
@@ -168,6 +169,20 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
             return (movie["title"] as! String).rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil
         })
         self.tableView.reloadData()
+        
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        let cell = sender as! UITableViewCell
+        let indexPath = tableView.indexPathForCell(cell)
+        let movie = movies![indexPath!.row]
+        
+        let detailViewController = segue.destinationViewController as! DetailViewController
+        detailViewController.movie = movie
+        
+        
+        
         
     }
  
