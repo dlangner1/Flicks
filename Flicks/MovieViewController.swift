@@ -5,6 +5,7 @@
 //  Created by Dustin Langner on 1/7/16.
 //  Copyright © 2016 Dustin Langner. All rights reserved.
 //
+// TODO: add Reachability pod for networking error
 
 import UIKit
 import AFNetworking
@@ -15,12 +16,9 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     var refreshControl: UIRefreshControl!
     
     @IBOutlet weak var tableView: UITableView!
- 
-    @IBOutlet weak var scrollView: UIScrollView!
-    
     @IBOutlet weak var searchBar: UISearchBar!
-    
-    @IBOutlet weak var networkErrorButton: UIButton!
+    @IBOutlet weak var networkErrorView: UIView!
+
     
     var config : SwiftLoader.Config = SwiftLoader.Config()
     
@@ -28,17 +26,20 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     var filteredMovies: [NSDictionary]?
     
+    var endpoint: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.tableView.backgroundColor = UIColor(white: 0.15, alpha: 1.0)
+        
+        networkErrorView.hidden = false
         
         searchBar.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
         
         self.loadingScreen()
-        
         self.fetchMovieData()
         self.controlRefresh()
 
@@ -48,7 +49,7 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         self.refreshControl = UIRefreshControl()
         self.refreshControl.addTarget(self, action: "onRefresh", forControlEvents: UIControlEvents.ValueChanged)
-        self.scrollView.insertSubview(refreshControl, atIndex: 0)
+        self.tableView.insertSubview(refreshControl, atIndex: 0)
     
     }
     
@@ -62,48 +63,42 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     }
     
-    @IBAction func networkErrorButtonPressed(sender: AnyObject) {
+    @IBAction func didTapNetworkError(sender: UITapGestureRecognizer) {
         self.onRefresh()
     }
     
     func fetchMovieData() {
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-        let url = NSURL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        let url = NSURL(string:"https://api.themoviedb.org/3/movie/\(endpoint)?api_key=\(apiKey)")
         let request = NSURLRequest(URL: url!)
         let session = NSURLSession(
             configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
             delegate:nil,
             delegateQueue:NSOperationQueue.mainQueue())
-        
-        self.networkErrorButton.backgroundColor = UIColor.darkGrayColor()
-        self.networkErrorButton.titleLabel!.textColor = UIColor.whiteColor()
-        
-        let task : NSURLSessionDataTask = session.dataTaskWithRequest(request,
-            completionHandler: { (dataOrNil, response, error) in
-                
-                self.refreshControl.endRefreshing()
-                
-                if let data = dataOrNil {
-                    if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
-                        data, options:[]) as? NSDictionary {
-                            NSLog("response: \(responseDictionary)")
-                            
-                            self.movies = responseDictionary["results"] as? [NSDictionary]
-                            self.filteredMovies = self.movies
-                            self.networkErrorButton.hidden = true
-                            self.tableView.reloadData()
-                    }
-                } else {
-                    if error != nil {
-                        self.networkErrorButton.hidden = false
+
+                let task : NSURLSessionDataTask = session.dataTaskWithRequest(request,
+                    completionHandler: { (dataOrNil, response, error) in
                         
-                    }
-                }
-        });
-        task.resume()
-    
-    
-    
+                          self.refreshControl.endRefreshing()
+                        
+                        if let data = dataOrNil {
+                            if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
+                                data, options:[]) as? NSDictionary {
+                                    //NSLog("response: \(responseDictionary)")
+                                    
+                                    self.movies = responseDictionary["results"] as? [NSDictionary]
+                                    self.filteredMovies = self.movies
+                                    self.tableView.reloadData()
+                                    
+                                    self.refreshControl.endRefreshing()
+                                    self.networkErrorView.hidden = true
+                            }
+                        } else {
+                            print("There was a network error")
+                            self.networkErrorView.hidden = false
+                        }
+                });
+                task.resume()
     }
     
     override func didReceiveMemoryWarning() {
@@ -113,7 +108,6 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
         SwiftLoader.show(title: "Loading...", animated: true)
         SwiftLoader.hide()
         
@@ -165,9 +159,22 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        filteredMovies = searchText.isEmpty ? movies : movies!.filter({(movie: NSDictionary) -> Bool in
-            return (movie["title"] as! String).rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil
-        })
+        if searchText.isEmpty {
+            filteredMovies = movies
+        } else {
+            filteredMovies = movies?.filter({ (movie: NSDictionary) -> Bool in
+                if let title = movie["title"] as? String {
+                    if title.rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil {
+                        
+                        return  true
+                    } else {
+                        return false
+                    }
+                }
+                return false
+            })
+        
+        }
         self.tableView.reloadData()
         
     }
@@ -180,10 +187,10 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         let detailViewController = segue.destinationViewController as! DetailViewController
         detailViewController.movie = movie
-        
-        
-        
-        
+ 
+    }
+    @IBAction func didTapView(sender: AnyObject) {
+        view.endEditing(true)
     }
  
 }
