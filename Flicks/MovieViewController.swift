@@ -31,10 +31,13 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         self.tableView.backgroundColor = UIColor(white: 0.15, alpha: 1.0)
         
         networkErrorView.hidden = false
-        
+
+        self.navigationController?.navigationBar.tintColor = UIColor.whiteColor()
+
         searchBar.delegate = self
         tableView.dataSource = self
         tableView.delegate = self
@@ -44,6 +47,7 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
         self.controlRefresh()
 
     }
+
     
     func controlRefresh() {
         
@@ -64,7 +68,7 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     @IBAction func didTapNetworkError(sender: UITapGestureRecognizer) {
-        self.onRefresh()
+        self.fetchMovieData()
     }
     
     func fetchMovieData() {
@@ -94,7 +98,6 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
                                     self.networkErrorView.hidden = true
                             }
                         } else {
-                            print("There was a network error")
                             self.networkErrorView.hidden = false
                         }
                 });
@@ -154,6 +157,11 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
         cell.titelLabel.textColor = UIColor.orangeColor()
         cell.overviewLabel.textColor = UIColor.whiteColor()
         cell.backgroundColor = UIColor.clearColor()
+    
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.lightGrayColor()
+        cell.selectedBackgroundView = backgroundView
 
         return cell
     }
