@@ -58,7 +58,7 @@ I ran into a few problems with the search bar, as I realized I had not initilize
 
 FLicks is a movies app displaying box office and top rental DVDs using [The Movie Database API](http://docs.themoviedb.apiary.io/#).
 
-Time spent: **X** hours spent in total
+Time spent: 13 hours spent in total
 
 ## User Stories
 
@@ -71,7 +71,7 @@ The following **required** functionality is completed:
 The following **optional** features are implemented:
 
 - [ ] For the large poster, load the low resolution image first and then switch to the high resolution image when complete.
-- [ ] Customize the navigation bar.
+- [x] Customize the navigation bar.
 
 The following **additional** features are implemented:
 
@@ -80,19 +80,19 @@ The following **additional** features are implemented:
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
 1. Having the network error be a button, instead of a view?
-2. 
+2. customizing the navgation bar in a better way
 
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://imgur.com/R77uNpO.gif' title='Flicks 2 Walkthrough' width='' alt='Flicks 2 Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+It was particularlly challenging to understand the implementation the tab bar, however, after walking through it, it made sense 
 
 ## License
 
