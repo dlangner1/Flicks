@@ -47,7 +47,7 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
 
     }
 
-    
+    // controlls the pull down refresh option
     func controlRefresh() {
         
         self.refreshControl = UIRefreshControl()
@@ -56,6 +56,7 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     }
     
+    // generates the loading image of the app
     func loadingScreen() {
         
         config.size = 150
@@ -66,10 +67,12 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     }
     
+    // fetches movie data when network error button is tapped
     @IBAction func didTapNetworkError(sender: UITapGestureRecognizer) {
         self.fetchMovieData()
     }
     
+    // fetches data about movie from API
     func fetchMovieData() {
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
         let url = NSURL(string:"https://api.themoviedb.org/3/movie/\(endpoint)?api_key=\(apiKey)")
@@ -186,6 +189,7 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
         
     }
     
+    // segues from movieViewController to detailViewController
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         let cell = sender as! UITableViewCell
@@ -196,6 +200,7 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
         detailViewController.movie = movie
  
     }
+    // drops keyboard out of screen when user touches view
     @IBAction func didTapView(sender: AnyObject) {
         view.endEditing(true)
     }
