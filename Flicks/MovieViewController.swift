@@ -30,8 +30,7 @@ class MovieViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+                
         self.tableView.backgroundColor = UIColor(white: 0.15, alpha: 1.0)
         
         networkErrorView.hidden = false
